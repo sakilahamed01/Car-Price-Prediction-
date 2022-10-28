@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head xmlns="http://www.w3.org/1999/xhtml">
+    <meta charset="UTF-8" />
+    <title>Car Price Predictor - 2022 🚗</title>
+    <link rel="stylesheet" href="../static/css/styles.css" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>Welcome to Car Price Predictor - 2022 🚗</h1>
+      <h5>
+        This App serves what can be the predicted price of your car if you wanna
+        sell now.
+      </h5>
+    </div>
+
+    <form method="post" accept-charset="utf-8" name="Modelform">
+      <div class="option-box">
+        <label><b>Select the company:</b> </label>
+        <select
+          id="company"
+          name="company"
+          required="1"
+          onchange="load_car_models(this.id,'car_models')"
+        >
+          {% for company in companies %}
+          <option value="{{ company }}">{{ company }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="option-box">
+        <label><b>Select the model:</b> </label>
+        <select id="car_models" name="car_models" required="1"></select>
+      </div>
+      <div class="option-box">
+        <label><b>Select Year of Purchase:</b> </label>
+        <select id="year" name="year" required="1">
+          {% for year in years %}
+          <option value="{{ year }}">{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="option-box">
+        <label><b>Select the Fuel Type:</b> </label>
+        <select id="fuel_type" name="fuel_type" required="1">
+          {% for fuel in fuel_types %}
+          <option value="{{ fuel }}">{{ fuel }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="option-box">
+        <label><b>Number of KM the car has travelled:</b> </label>
+        <input
+          type="text"
+          id="kilo_driven"
+          name="kilo_driven"
+          placeholder="Kilometers"
+        />
+      </div>
+      <div>
+        <button class="btn" onclick="send_data()">Predict Price</button>
+      </div>
+      <h4><span id="prediction"></span></h4>
+    </form>
+
+    <script>
+
+      function load_car_models(company_id,car_model_id)
+      {
+          var company=document.getElementById(company_id);
+          var car_model= document.getElementById(car_model_id);
+          console.log(company.value);
+          car_model.value="";
+          car_model.innerHTML="";
+          {% for company in companies %}
+              if( company.value == "{{ company }}")
+              {
+                  {% for model in car_models %}
+                      {% if company in model %}
+
+                          var newOption= document.createElement("option");
+                          newOption.value="{{ model }}";
+                          newOption.innerHTML="{{ model }}";
+                          car_model.options.add(newOption);
+                      {% endif %}
+                  {% endfor %}
+              }
+          {% endfor %}
+      }
+
+      function form_handler(event) {
+          event.preventDefault();
+      }
+      function send_data()
+      {
+          document.querySelector('form').addEventListener("submit",form_handler);
+
+          var fd=new FormData(document.querySelector('form'));
+
+          var xhr= new XMLHttpRequest({mozSystem: true});
+
+          xhr.open('POST','/predict',true);
+          document.getElementById('prediction').innerHTML="Wait! Predicting Price.....";
+          xhr.onreadystatechange = function(){
+              if(xhr.readyState == XMLHttpRequest.DONE){
+                  document.getElementById('prediction').innerHTML="Prediction Price: ₹"+xhr.responseText;
+
+              }
+          };
+
+          xhr.onload= function(){};
+
+          xhr.send(fd);
+      }
+    </script>
+  </body>
+</html>
