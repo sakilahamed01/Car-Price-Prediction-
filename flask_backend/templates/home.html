@@ -103,8 +103,11 @@
           document.getElementById('prediction').innerHTML="Wait! Predicting Price.....";
           xhr.onreadystatechange = function(){
               if(xhr.readyState == XMLHttpRequest.DONE){
-                  document.getElementById('prediction').innerHTML="Prediction Price: ₹"+xhr.responseText;
-
+                  if(xhr.responseText === "0.0"){
+                    document.getElementById('prediction').innerHTML="Car condition is not good for selling anymore. 🛠"
+                  }else{
+                    document.getElementById('prediction').innerHTML="Prediction Price: ₹"+xhr.responseText;
+                  }
               }
           };
 

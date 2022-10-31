@@ -34,7 +34,11 @@ def predict():
 
     prediction = model.predict(pd.DataFrame(columns=['name', 'company', 'year', 'kms_driven', 'fuel_type'],
                                             data=np.array([car_model, company, year, driven, fuel_type]).reshape(1, 5)))
-    return str(np.round(prediction[0], 2))
+    print(prediction)
+    prediction_price = np.round(prediction[0], 2)
+    if prediction_price <= 0.0:
+        prediction_price = 0.0
+    return str(prediction_price)
 
 
 if __name__ == '__main__':
